@@ -13,7 +13,8 @@ def compare_images(imageA, imageB):
     return score
 
 
-def remove_similar_images(input_folder, output_folder, similarity_threshold=0.9):
+def remove_similar_images(output_folder, similarity_threshold=0.9):
+    input_folder = "./videos/output_images"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
