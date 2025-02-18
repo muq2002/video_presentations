@@ -61,6 +61,14 @@
         "documentation": {}
     },
     {
+        "label": "tqdm",
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "isExtraImport": true,
+        "detail": "tqdm",
+        "documentation": {}
+    },
+    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
@@ -70,11 +78,43 @@
         "documentation": {}
     },
     {
+        "label": "video_to_frames",
+        "importPath": "video_tools",
+        "description": "video_tools",
+        "isExtraImport": true,
+        "detail": "video_tools",
+        "documentation": {}
+    },
+    {
+        "label": "remove_similar_images",
+        "importPath": "images_tools",
+        "description": "images_tools",
+        "isExtraImport": true,
+        "detail": "images_tools",
+        "documentation": {}
+    },
+    {
+        "label": "convert_images_to_pdf",
+        "importPath": "convert_to_pdf",
+        "description": "convert_to_pdf",
+        "isExtraImport": true,
+        "detail": "convert_to_pdf",
+        "documentation": {}
+    },
+    {
         "label": "YouTubeDownloader",
         "importPath": "download_youtube",
         "description": "download_youtube",
         "isExtraImport": true,
         "detail": "download_youtube",
+        "documentation": {}
+    },
+    {
+        "label": "urlparse",
+        "importPath": "urllib.parse",
+        "description": "urllib.parse",
+        "isExtraImport": true,
+        "detail": "urllib.parse",
         "documentation": {}
     },
     {
@@ -96,29 +136,29 @@
         "documentation": {}
     },
     {
-        "label": "compare_images",
-        "kind": 2,
+        "label": "ImageProcessor",
+        "kind": 6,
         "importPath": "images_tools",
         "description": "images_tools",
-        "peekOfCode": "def compare_images(imageA, imageB):\n    imageA_gray = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)\n    imageB_gray = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)\n    score, _ = ssim(imageA_gray, imageB_gray, full=True)\n    return score\ndef remove_similar_images(output_folder, similarity_threshold=0.9):\n    input_folder = \"./videos/output_images\"\n    if not os.path.exists(output_folder):\n        os.makedirs(output_folder)\n    image_files = [",
+        "peekOfCode": "class ImageProcessor:\n    def __init__(self, similarity_threshold=0.9):\n        self.similarity_threshold = similarity_threshold\n    def compare_images(self, imageA, imageB):\n        \"\"\"\n        Compare two images using Structural Similarity Index (SSIM).\n        Args:\n            imageA: First image\n            imageB: Second image\n        Returns:",
         "detail": "images_tools",
         "documentation": {}
     },
     {
-        "label": "remove_similar_images",
-        "kind": 2,
-        "importPath": "images_tools",
-        "description": "images_tools",
-        "peekOfCode": "def remove_similar_images(output_folder, similarity_threshold=0.9):\n    input_folder = \"./videos/output_images\"\n    if not os.path.exists(output_folder):\n        os.makedirs(output_folder)\n    image_files = [\n        f\n        for f in os.listdir(input_folder)\n        if os.path.isfile(os.path.join(input_folder, f))\n    ]\n    unique_images = []",
-        "detail": "images_tools",
-        "documentation": {}
-    },
-    {
-        "label": "format_duration",
+        "label": "is_youtube_url",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def format_duration(seconds):\n    \"\"\"Convert duration in seconds to HH:MM:SS format.\"\"\"\n    hours = seconds // 3600\n    minutes = (seconds % 3600) // 60\n    seconds = seconds % 60\n    return f\"{hours:02d}:{minutes:02d}:{seconds:02d}\"\ndef main():\n    parser = argparse.ArgumentParser(\n        description=\"Download YouTube videos and extract information.\"\n    )",
+        "peekOfCode": "def is_youtube_url(url):\n    \"\"\"Check if the provided string is a YouTube URL.\"\"\"\n    try:\n        parsed = urlparse(url)\n        return 'youtube.com' in parsed.netloc or 'youtu.be' in parsed.netloc\n    except:\n        return False\ndef process_video(video_path, output_folder, interval, remove_similar, create_pdf):\n    \"\"\"Process video with frame extraction and optional features.\"\"\"\n    try:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "process_video",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def process_video(video_path, output_folder, interval, remove_similar, create_pdf):\n    \"\"\"Process video with frame extraction and optional features.\"\"\"\n    try:\n        os.makedirs(output_folder, exist_ok=True)\n        # Extract frames\n        print(f\"Extracting frames every {interval} seconds...\")\n        video_to_frames(video_path, output_folder, interval)\n        # Remove similar images if requested\n        if remove_similar:\n            print(\"Removing similar images...\")",
         "detail": "main",
         "documentation": {}
     },
@@ -127,7 +167,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        description=\"Download YouTube videos and extract information.\"\n    )\n    parser.add_argument(\n        \"-u\", \"--url\",\n        required=True,\n        help=\"YouTube video URL\"\n    )\n    parser.add_argument(",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        description=\"Process a video (local file or YouTube URL) to extract frames, remove similar images, and convert to PDF.\"\n    )\n    parser.add_argument(\n        \"-v\", \"--video\",\n        required=True,\n        help=\"Path to local video file or YouTube URL\"\n    )\n    parser.add_argument(",
         "detail": "main",
         "documentation": {}
     },
