@@ -1,0 +1,143 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "yt_dlp",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "yt_dlp",
+        "description": "yt_dlp",
+        "detail": "yt_dlp",
+        "documentation": {}
+    },
+    {
+        "label": "cv2",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "cv2",
+        "description": "cv2",
+        "detail": "cv2",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "structural_similarity",
+        "importPath": "skimage.metrics",
+        "description": "skimage.metrics",
+        "isExtraImport": true,
+        "detail": "skimage.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "YouTubeDownloader",
+        "importPath": "download_youtube",
+        "description": "download_youtube",
+        "isExtraImport": true,
+        "detail": "download_youtube",
+        "documentation": {}
+    },
+    {
+        "label": "convert_images_to_pdf",
+        "kind": 2,
+        "importPath": "convert_to_pdf",
+        "description": "convert_to_pdf",
+        "peekOfCode": "def convert_images_to_pdf(input_folder, output_pdf):\n    image_files = [\n        f\n        for f in os.listdir(input_folder)\n        if f.endswith((\".png\", \".jpg\", \".jpeg\", \".bmp\", \".tiff\"))\n    ]\n    image_files.sort()\n    image_list = []\n    for image_file in image_files:\n        image_path = os.path.join(input_folder, image_file)",
+        "detail": "convert_to_pdf",
+        "documentation": {}
+    },
+    {
+        "label": "YouTubeDownloader",
+        "kind": 6,
+        "importPath": "download_youtube",
+        "description": "download_youtube",
+        "peekOfCode": "class YouTubeDownloader:\n    def __init__(self):\n        self.default_download_path = \"./downloads\"\n    def download_youtube_video(self, url, save_path=None):\n        \"\"\"Download YouTube video and return the path to downloaded file.\"\"\"\n        if save_path is None:\n            save_path = self.default_download_path\n        try:\n            os.makedirs(save_path, exist_ok=True)\n            ydl_opts = {",
+        "detail": "download_youtube",
+        "documentation": {}
+    },
+    {
+        "label": "compare_images",
+        "kind": 2,
+        "importPath": "images_tools",
+        "description": "images_tools",
+        "peekOfCode": "def compare_images(imageA, imageB):\n    imageA_gray = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)\n    imageB_gray = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)\n    score, _ = ssim(imageA_gray, imageB_gray, full=True)\n    return score\ndef remove_similar_images(output_folder, similarity_threshold=0.9):\n    input_folder = \"./videos/output_images\"\n    if not os.path.exists(output_folder):\n        os.makedirs(output_folder)\n    image_files = [",
+        "detail": "images_tools",
+        "documentation": {}
+    },
+    {
+        "label": "remove_similar_images",
+        "kind": 2,
+        "importPath": "images_tools",
+        "description": "images_tools",
+        "peekOfCode": "def remove_similar_images(output_folder, similarity_threshold=0.9):\n    input_folder = \"./videos/output_images\"\n    if not os.path.exists(output_folder):\n        os.makedirs(output_folder)\n    image_files = [\n        f\n        for f in os.listdir(input_folder)\n        if os.path.isfile(os.path.join(input_folder, f))\n    ]\n    unique_images = []",
+        "detail": "images_tools",
+        "documentation": {}
+    },
+    {
+        "label": "format_duration",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def format_duration(seconds):\n    \"\"\"Convert duration in seconds to HH:MM:SS format.\"\"\"\n    hours = seconds // 3600\n    minutes = (seconds % 3600) // 60\n    seconds = seconds % 60\n    return f\"{hours:02d}:{minutes:02d}:{seconds:02d}\"\ndef main():\n    parser = argparse.ArgumentParser(\n        description=\"Download YouTube videos and extract information.\"\n    )",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        description=\"Download YouTube videos and extract information.\"\n    )\n    parser.add_argument(\n        \"-u\", \"--url\",\n        required=True,\n        help=\"YouTube video URL\"\n    )\n    parser.add_argument(",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "video_to_frames",
+        "kind": 2,
+        "importPath": "video_tools",
+        "description": "video_tools",
+        "peekOfCode": "def video_to_frames(video_path, output_folder, interval_seconds):\n    if not os.path.exists(output_folder):\n        os.makedirs(output_folder)\n    cap = cv2.VideoCapture(video_path)\n    fps = int(cap.get(cv2.CAP_PROP_FPS))\n    interval_frames = int(fps * interval_seconds)\n    count = 0\n    frame_number = 0\n    while True:\n        ret, frame = cap.read()",
+        "detail": "video_tools",
+        "documentation": {}
+    }
+]

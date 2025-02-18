@@ -1,51 +1,69 @@
 import os
 import argparse
-from video_tools import video_to_frames
-from images_tools import remove_similar_images
-from convert_to_pdf import convert_images_to_pdf
+from download_youtube import YouTubeDownloader
 
+def format_duration(seconds):
+    """Convert duration in seconds to HH:MM:SS format."""
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Process a video to extract frames, remove similar images, and convert to PDF."
-    )
-    parser.add_argument("-v", "--video", required=True, help="Path to the video file.")
-    parser.add_argument(
-        "-o", "--output", default="images", help="Output folder for extracted images."
+        description="Download YouTube videos and extract information."
     )
     parser.add_argument(
-        "-i",
-        "--interval",
-        type=int,
-        default=5,
-        help="Interval in seconds between frames to extract.",
+        "-u", "--url",
+        required=True,
+        help="YouTube video URL"
     )
     parser.add_argument(
-        "-r",
-        "--remove_similar",
+        "-o", "--output",
+        default="./downloads",
+        help="Output directory for downloaded videos"
+    )
+    parser.add_argument(
+        "-i", "--info-only",
         action="store_true",
-        help="Remove similar images after extraction.",
-    )
-    parser.add_argument(
-        "-p", "--pdf", action="store_true", help="Convert extracted images to PDF."
+        help="Only show video information without downloading"
     )
 
     args = parser.parse_args()
 
-    output_folder = os.path.join(os.path.dirname(args.video), args.output)
-    os.makedirs(output_folder, exist_ok=True)
+    # Initialize downloader
+    downloader = YouTubeDownloader()
 
-    video_to_frames(args.video, output_folder, args.interval)
+    # Get video information
+    print("Fetching video information...")
+    video_info = downloader.get_video_info(args.url)
 
-    if args.remove_similar:
-        remove_similar_images(output_folder)
+    if video_info:
+        print("\nVideo Information:")
+        print(f"Title: {video_info['title']}")
+        print(f"Uploader: {video_info['uploader']}")
+        if isinstance(video_info['duration'], (int, float)):
+            print(f"Duration: {format_duration(video_info['duration'])}")
+        print(f"Views: {video_info['view_count']:,}")
+        print(f"Likes: {video_info['like_count']:,}")
+        print(f"Upload Date: {video_info['upload_date']}")
+        if video_info['tags']:
+            print(f"Tags: {', '.join(video_info['tags'][:5])}...")
+        print("\nDescription:")
+        print(video_info['description'][:200] + "..." if len(video_info['description']) > 200 else video_info['description'])
 
-    # Optionally convert images to PDF
-    if args.pdf:
-        pdf_path = os.path.join(os.path.dirname(args.video), "output.pdf")
-        convert_images_to_pdf(output_folder, pdf_path)
-        print(f"PDF created at: {pdf_path}")
+        # Download video if not info-only mode
+        if not args.info_only:
+            print("\nStarting download...")
+            video_path, _ = downloader.download_youtube_video(args.url, args.output)
 
+            if video_path:
+                print("\nCreated/Modified files:")
+                for root, _, files in os.walk(args.output):
+                    for file in files:
+                        print(os.path.join(root, file))
+    else:
+        print("Failed to retrieve video information.")
 
 if __name__ == "__main__":
     main()

@@ -1,64 +1,58 @@
+import os
 import yt_dlp as youtube_dl
 
 
-def download_youtube_video(url, save_path="."):
-    try:
-        # Set up the download options
-        ydl_opts = {
-            "outtmpl": f"{save_path}/%(title)s.%(ext)s",  # Save as the title of the video
-            "format": "best",  # Download the best available quality
-        }
+class YouTubeDownloader:
+    def __init__(self):
+        self.default_download_path = "./downloads"
 
-        # Download the video
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
+    def download_youtube_video(self, url, save_path=None):
+        """Download YouTube video and return the path to downloaded file."""
+        if save_path is None:
+            save_path = self.default_download_path
 
-        print(f"Download completed! Video saved to: {save_path}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+        try:
+            os.makedirs(save_path, exist_ok=True)
 
+            ydl_opts = {
+                "outtmpl": f"{save_path}/%(title)s.%(ext)s",
+                "format": "best",
+                "quiet": False,
+                "no_warnings": False,
+            }
 
-def get_video_info(url):
-    try:
-        # Set up options to extract information
-        ydl_opts = {
-            "skip_download": True,  # Do not download the video
-        }
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                video_path = os.path.join(save_path, f"{info['title']}.{info['ext']}")
+                print(f"Download completed! Video saved to: {video_path}")
+                return video_path, info
 
-        # Extract video information
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(url, download=False)
+        except Exception as e:
+            print(f"An error occurred during download: {e}")
+            return None, None
 
-        # Display the extracted information
-        video_info = {
-            "title": info_dict.get("title", "N/A"),
-            "uploader": info_dict.get("uploader", "N/A"),
-            "duration": info_dict.get("duration", "N/A"),
-            "view_count": info_dict.get("view_count", "N/A"),
-            "like_count": info_dict.get("like_count", "N/A"),
-            "dislike_count": info_dict.get("dislike_count", "N/A"),
-            "upload_date": info_dict.get("upload_date", "N/A"),
-            "description": info_dict.get("description", "N/A"),
-            "tags": info_dict.get("tags", []),
-        }
+    def get_video_info(self, url):
+        """Get video information without downloading."""
+        try:
+            ydl_opts = {
+                "skip_download": True,
+            }
 
-        return video_info
-    except Exception as e:
-        print(f"An error occurred while retrieving video information: {e}")
-        return None
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(url, download=False)
 
+            video_info = {
+                "title": info_dict.get("title", "N/A"),
+                "uploader": info_dict.get("uploader", "N/A"),
+                "duration": info_dict.get("duration", "N/A"),
+                "view_count": info_dict.get("view_count", "N/A"),
+                "like_count": info_dict.get("like_count", "N/A"),
+                "upload_date": info_dict.get("upload_date", "N/A"),
+                "description": info_dict.get("description", "N/A"),
+                "tags": info_dict.get("tags", []),
+            }
 
-# Example usage
-if __name__ == "__main__":
-    video_url = "https://www.youtube.com/watch?v=-i3NQ-by2b8"  # Replace with your desired video URL
-    download_path = "./downloads"  # Replace with your desired save path
-
-    # Download the video
-    download_youtube_video(video_url, download_path)
-
-    # Get video information
-    info = get_video_info(video_url)
-    if info:
-        print("\nVideo Information:")
-        for key, value in info.items():
-            print(f"{key.capitalize()}: {value}")
+            return video_info
+        except Exception as e:
+            print(f"An error occurred while retrieving video information: {e}")
+            return None
