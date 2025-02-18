@@ -3,7 +3,7 @@
 import os
 import argparse
 from video_tools import video_to_frames
-from images_tools import ImageProcessor  # Import the class directly
+from images_tools import ImageProcessor
 from convert_to_pdf import convert_images_to_pdf
 from download_youtube import YouTubeDownloader
 from urllib.parse import urlparse
@@ -18,7 +18,7 @@ def is_youtube_url(url):
         return False
 
 
-def process_video(video_path, output_folder, interval, remove_similar, create_pdf):
+def process_video(video_path, output_folder, interval, skip_similar=False, skip_pdf=False, threshold=0.9):
     """Process video with frame extraction and optional features."""
     try:
         os.makedirs(output_folder, exist_ok=True)
@@ -27,10 +27,10 @@ def process_video(video_path, output_folder, interval, remove_similar, create_pd
         print(f"Extracting frames every {interval} seconds...")
         video_to_frames(video_path, output_folder, interval)
 
-        # Remove similar images if requested
-        if remove_similar:
+        # Remove similar images (enabled by default)
+        if not skip_similar:
             print("Removing similar images...")
-            image_processor = ImageProcessor(similarity_threshold=0.9)
+            image_processor = ImageProcessor(similarity_threshold=threshold)
             unique_folder = os.path.join(output_folder, "unique")
             unique_count, removed_count = image_processor.remove_similar_images(
                 output_folder, unique_folder
@@ -40,8 +40,8 @@ def process_video(video_path, output_folder, interval, remove_similar, create_pd
             )
             output_folder = unique_folder  # Update output folder for PDF creation
 
-        # Convert to PDF if requested
-        if create_pdf:
+        # Convert to PDF (enabled by default)
+        if not skip_pdf:
             pdf_path = os.path.join(os.path.dirname(video_path), "output.pdf")
             print("Converting images to PDF...")
             convert_images_to_pdf(output_folder, pdf_path)
@@ -69,13 +69,14 @@ def main():
         help="Interval in seconds between frames to extract",
     )
     parser.add_argument(
-        "-r",
-        "--remove_similar",
+        "--skip_similar",
         action="store_true",
-        help="Remove similar images after extraction",
+        help="Skip removing similar images (similar image removal is enabled by default)",
     )
     parser.add_argument(
-        "-p", "--pdf", action="store_true", help="Convert extracted images to PDF"
+        "--skip_pdf",
+        action="store_true",
+        help="Skip PDF conversion (PDF conversion is enabled by default)",
     )
     parser.add_argument(
         "-d",
@@ -124,7 +125,12 @@ def main():
     # Create output folder and process video
     output_folder = os.path.join(os.path.dirname(video_path), args.output)
     process_video(
-        video_path, output_folder, args.interval, args.remove_similar, args.pdf
+        video_path=video_path,
+        output_folder=output_folder,
+        interval=args.interval,
+        skip_similar=args.skip_similar,
+        skip_pdf=args.skip_pdf,
+        threshold=args.threshold
     )
 
     # Print summary
