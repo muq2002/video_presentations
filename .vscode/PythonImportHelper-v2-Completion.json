@@ -86,7 +86,7 @@
         "documentation": {}
     },
     {
-        "label": "remove_similar_images",
+        "label": "ImageProcessor",
         "importPath": "images_tools",
         "description": "images_tools",
         "isExtraImport": true,
@@ -149,7 +149,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def is_youtube_url(url):\n    \"\"\"Check if the provided string is a YouTube URL.\"\"\"\n    try:\n        parsed = urlparse(url)\n        return 'youtube.com' in parsed.netloc or 'youtu.be' in parsed.netloc\n    except:\n        return False\ndef process_video(video_path, output_folder, interval, remove_similar, create_pdf):\n    \"\"\"Process video with frame extraction and optional features.\"\"\"\n    try:",
+        "peekOfCode": "def is_youtube_url(url):\n    \"\"\"Check if the provided string is a YouTube URL.\"\"\"\n    try:\n        parsed = urlparse(url)\n        return \"youtube.com\" in parsed.netloc or \"youtu.be\" in parsed.netloc\n    except:\n        return False\ndef process_video(video_path, output_folder, interval, remove_similar, create_pdf):\n    \"\"\"Process video with frame extraction and optional features.\"\"\"\n    try:",
         "detail": "main",
         "documentation": {}
     },
@@ -167,7 +167,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        description=\"Process a video (local file or YouTube URL) to extract frames, remove similar images, and convert to PDF.\"\n    )\n    parser.add_argument(\n        \"-v\", \"--video\",\n        required=True,\n        help=\"Path to local video file or YouTube URL\"\n    )\n    parser.add_argument(",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        description=\"Process a video (local file or YouTube URL) to extract frames, remove similar images, and convert to PDF.\"\n    )\n    parser.add_argument(\n        \"-v\", \"--video\", required=True, help=\"Path to local video file or YouTube URL\"\n    )\n    parser.add_argument(\n        \"-o\", \"--output\", default=\"images\", help=\"Output folder for extracted images\"\n    )",
         "detail": "main",
         "documentation": {}
     },
